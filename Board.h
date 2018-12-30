@@ -22,19 +22,20 @@ class Board{
         }
         void chain(int x,int y,int Record[5][6],int Max[5][6],Color color[5][6],Color inputColor){
             for(int i = 0;i<4;i++){
-                if(0<=x+di[i].x&&x+di[i].x<5 && 0<=y+di[i].y&&y+di[i].y<6){
+                int corX=x+di[i].x;int corY=y+di[i].y;
+                if(0<=corX && corX<5 && 0<=corY && corY<6){
                     //add point
-                    Record[x+di[i].x][y+di[i].y]++; 
-                    //draw color
-                    if(Record[x+di[i].x][y+di[i].y]<Max[x+di[i].x][y+di[i].y]){
-                        color[x+di[i].x][y+di[i].y]=inputColor;
-                    }else{
-                        color[x+di[i].x][y+di[i].y]=Black;
+                    Record[corX][corY]++; 
+                    //chain explode
+                    if(Record[corX][corY]==Max[corX][corY]){
+                        this->chain(corX,corY,Record,Max,color,inputColor);
                     }
                     
-                    //chain explode
-                    if(Record[x+di[i].x][y+di[i].y]==Max[x+di[i].x][y+di[i].y]){
-                        this->chain(x+di[i].x,y+di[i].y,Record,Max,color,inputColor);
+                    //draw color
+                    if(Record[corX][corY]<Max[corX][corY]){
+                        color[corX][corY]=inputColor;
+                    }else{
+                        color[corX][corY]=Black;
                     }
                 }
             }
