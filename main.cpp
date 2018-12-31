@@ -39,18 +39,20 @@ int main()
     // something check who is the winner
     playerOne::Student one;
     playerTwo::Student two;
-    int x,y; bool playone = false;
-    one.makeMove(Record,Max,color,Blue);
-    x = one.getX();y = one.getY();
+    int x,y; bool playone = true;
+    two.makeMove(Record,Max,color,Blue);
+    x = two.getX();y = two.getY();
+    // one.makeMove(Record,Max,color,Blue);
+    // x = one.getX();y = one.getY();
     play.game(x,y,Record,Max,color,Blue);  
     while(true){
         if(playone){
-            inputColor=Blue;
+            inputColor=Red;
             one.makeMove(Record,Max,color,inputColor);
             x = one.getX();y = one.getY();
             playone = false;
         }else{
-            inputColor=Red;
+            inputColor=Blue;
             two.makeMove(Record,Max,color,inputColor);
             x = two.getX();y = two.getY();
             playone = true;

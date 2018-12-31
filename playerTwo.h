@@ -33,7 +33,7 @@ namespace playerTwo
                             game(i,j,newNode->board,Max,newNode->color,inputColor);
                             newNode->grade = score(newNode->board,Max,newNode->color,inputColor);
                             root->child[6*i+j] = newNode;
-                            if(newNode->grade>=max){
+                            if(newNode->grade>max){
                                 max=newNode->grade;
                                 res[0] =i;
                                 res[1] =j;
