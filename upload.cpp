@@ -15,7 +15,7 @@ struct direc{
     Color self;
     class gameTree{
         public:
-            int minmax(int depth,int limit,struct node* now,bool maxPlayer){
+            int minmax(int depth,int limit,struct node* now,bool maxPlayer,int alpha,int beta){
                 if(depth==0) return now->grade;
                 //設置顏色
                 Color enmyColor=Blue;
@@ -23,41 +23,45 @@ struct direc{
                 //
                 if(maxPlayer){
                     this->makechild(now,self);
-                    int best=-10000;
                     for(int i=0;i<5;i++){
                         for(int j=0;j<6;j++){
                             if(now->child[i][j]==NULL) continue;
-                            int value=minmax(depth-1,limit,now->child[i][j],false);
-                            if(value>best){
-                                best=value;
+                            int value=minmax(depth-1,limit,now->child[i][j],false,alpha,beta);
+                            if(value>alpha){
+                                alpha=value;
                                 //回傳座標
                                 if(depth==limit){
                                     this->x=i;
                                     this->y=j;
                                 }
-                            } 
+                            }
+                            if (beta <= alpha){
+                                if(depth==limit){
+                                    this->x=i;
+                                    this->y=j;
+                                }
+                                break;
+                            }
                             delete now->child[i][j];
                         }
                     }
-                    if(best==-10000) best=now->grade;
-                    now->grade = best;
-                    return best;
+                    if(alpha==-1000) alpha=now->grade;
+                    now->grade = alpha;
+                    return alpha;
                 }else{
                     this->makechild(now,enmyColor);
-                    int best=10000;
                     for(int i=0;i<5;i++){
                         for(int j=0;j<6;j++){
                             if(now->child[i][j]==NULL) continue;
-                            int value = minmax(depth-1,limit,now->child[i][j],true);
-                            if(value<best){ 
-                                best=value;
-                            } 
+                            int value = minmax(depth-1,limit,now->child[i][j],true,alpha,beta);
+                            if(value<beta) beta=value;
+                            if(beta<=alpha) break;
                             delete now->child[i][j];
                         }
                     }
-                    if(best==10000) best=now->grade;
-                    now->grade = best;
-                    return best;
+                    if(beta==1000) beta=now->grade;
+                    now->grade = beta;
+                    return beta;
                 }
             }
             void makechild(struct node* now,Color inputColor){
@@ -167,11 +171,11 @@ struct direc{
                 gameTree tree;
                 tree.root = new node;
                 this->copy(tree.root,Record,color,false);
-                int value=tree.minmax(4,4,tree.root,true);
+                int value=tree.minmax(3,3,tree.root,true,-1000,1000);
                 this->x=tree.x;
-                this->y=tree.y;
+                this->y=tree.y;//std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
                 delete tree.root;
-                std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
+                
             }
             static void copy(struct node *to,int from[5][6],Color color[5][6],bool maxPlayer){
                 to->maxPlayer = maxPlayer;

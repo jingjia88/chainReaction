@@ -14,6 +14,7 @@ namespace playerTwo
         struct node* child[5][6];
         node(){}
         node(int x,int y):cor_x(x),cor_y(y){};
+        ~node() {}
     };
     int edge[5][6];
     Color self;
@@ -27,43 +28,45 @@ namespace playerTwo
                 //
                 if(maxPlayer){
                     this->makechild(now,self);
-                    int best=-10000;
                     for(int i=0;i<5;i++){
                         for(int j=0;j<6;j++){
                             if(now->child[i][j]==NULL) continue;
                             int value=minmax(depth-1,limit,now->child[i][j],false,alpha,beta);
-                            if(value>best){
-                                best=value;
+                            if(value>alpha){
+                                alpha=value;
                                 //回傳座標
                                 if(depth==limit){
                                     this->x=i;
                                     this->y=j;
                                 }
-                            } 
-                            if(best>alpha) alpha=best;
-                            if (beta <= alpha) break;
-                            delete now->child[i][j];
+                            }
+                            if (beta <= alpha){
+                                if(depth==limit){
+                                    this->x=i;
+                                    this->y=j;
+                                }
+                                break;
+                            }
+                            now->child[i][j]->~node();
                         }
                     }
-                    if(best==-10000) best=now->grade;
-                    now->grade = best;
-                    return best;
+                    if(alpha==-1000) alpha=now->grade;
+                    now->grade = alpha;
+                    return alpha;
                 }else{
                     this->makechild(now,enmyColor);
-                    int best=10000;
                     for(int i=0;i<5;i++){
                         for(int j=0;j<6;j++){
                             if(now->child[i][j]==NULL) continue;
                             int value = minmax(depth-1,limit,now->child[i][j],true,alpha,beta);
-                            if(value<best) best=value;
-                            if(best<beta) beta=best;
+                            if(value<beta) beta=value;
                             if(beta<=alpha) break;
-                            delete now->child[i][j];
+                            now->child[i][j]->~node();
                         }
                     }
-                    if(best==10000) best=now->grade;
-                    now->grade = best;
-                    return best;
+                    if(beta==1000) beta=now->grade;
+                    now->grade = beta;
+                    return beta;
                 }
             }
             void makechild(struct node* now,Color inputColor){
@@ -128,18 +131,7 @@ namespace playerTwo
                 }
                 return myself-enmy;
             }
-            static void printScore(struct node* now){
-                for(int i = 0;i<5;i++){
-                    for(int j=0;j<6;j++){
-                        if(now->child[i][j]==NULL){
-                            std::cout<<"n ";
-                        }else{
-                            std::cout<<now->child[i][j]->grade<<" ";
-                        }
-                    }   
-                    std::cout<<std::endl;
-                }
-            }
+            
             static void printBoard(struct node* now){
                 for(int i = 0;i<5;i++){
                     for(int j=0;j<6;j++){
@@ -175,9 +167,9 @@ namespace playerTwo
                 this->copy(tree.root,Record,color,false);
                 int value=tree.minmax(5,5,tree.root,true,-1000,1000);
                 this->x=tree.x;
-                this->y=tree.y;
-                delete tree.root;
-                std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
+                this->y=tree.y;std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
+                tree.root->~node();
+                
             }
             static void copy(struct node *to,int from[5][6],Color color[5][6],bool maxPlayer){
                 to->maxPlayer = maxPlayer;
