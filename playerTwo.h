@@ -19,7 +19,7 @@ namespace playerTwo
     Color self;
     class gameTree{
         public:
-            int minmax(int depth,int limit,struct node* now,bool maxPlayer){
+            int minmax(int depth,int limit,struct node* now,bool maxPlayer,int alpha,int beta){
                 if(depth==0) return now->grade;
                 //設置顏色
                 Color enmyColor=Blue;
@@ -31,7 +31,7 @@ namespace playerTwo
                     for(int i=0;i<5;i++){
                         for(int j=0;j<6;j++){
                             if(now->child[i][j]==NULL) continue;
-                            int value=minmax(depth-1,limit,now->child[i][j],false);
+                            int value=minmax(depth-1,limit,now->child[i][j],false,alpha,beta);
                             if(value>best){
                                 best=value;
                                 //回傳座標
@@ -40,6 +40,8 @@ namespace playerTwo
                                     this->y=j;
                                 }
                             } 
+                            if(best>alpha) alpha=best;
+                            if (beta <= alpha) break;
                             delete now->child[i][j];
                         }
                     }
@@ -52,10 +54,10 @@ namespace playerTwo
                     for(int i=0;i<5;i++){
                         for(int j=0;j<6;j++){
                             if(now->child[i][j]==NULL) continue;
-                            int value = minmax(depth-1,limit,now->child[i][j],true);
-                            if(value<best){ 
-                                best=value;
-                            } 
+                            int value = minmax(depth-1,limit,now->child[i][j],true,alpha,beta);
+                            if(value<best) best=value;
+                            if(best<beta) beta=best;
+                            if(beta<=alpha) break;
                             delete now->child[i][j];
                         }
                     }
@@ -171,7 +173,7 @@ namespace playerTwo
                 gameTree tree;
                 tree.root = new node;
                 this->copy(tree.root,Record,color,false);
-                int value=tree.minmax(4,4,tree.root,true);
+                int value=tree.minmax(5,5,tree.root,true,-1000,1000);
                 this->x=tree.x;
                 this->y=tree.y;
                 delete tree.root;

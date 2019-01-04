@@ -67,6 +67,16 @@ int main()
                 cout<<Record[i][j]<<"-"<<color[i][j]<<"="<<Max[i][j]<<" ";
             } 
             cout<<endl;
+        }bool nopace=false;
+        for(int i =0;i<5;i++){
+            for(int j =0;j<6;j++){
+                if(color[i][j]!=Black) nopace=true;
+            }
+        }
+        if(!nopace){
+            if(playone) cout<<"two win"<<endl;
+            if(!playone) cout<<"one win"<<endl;
+            break;
         }
         if(onewin==false){
             cout<<"two win"<<endl;

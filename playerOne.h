@@ -179,7 +179,7 @@ namespace playerOne
                 gameTree tree;
                 tree.root = new node;
                 this->copy(tree.root,Record,color,false);
-                int value=tree.minmax(3,3,tree.root,true);
+                int value=tree.minmax(4,4,tree.root,true);
                 this->x=tree.x;
                 this->y=tree.y;
                 delete tree.root;

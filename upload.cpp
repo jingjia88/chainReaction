@@ -36,16 +36,11 @@ struct direc{
                                     this->y=j;
                                 }
                             } 
+                            delete now->child[i][j];
                         }
                     }
                     if(best==-10000) best=now->grade;
                     now->grade = best;
-                    for(int i=0;i<5;i++){
-                        for(int j=0;j<6;j++){
-                            if(now->child[i][j]==NULL) continue;
-                            delete now->child[i][j];
-                        }
-                    }
                     return best;
                 }else{
                     this->makechild(now,enmyColor);
@@ -57,15 +52,11 @@ struct direc{
                             if(value<best){ 
                                 best=value;
                             } 
-                        }
-                    }
-                    now->grade = best;
-                    for(int i=0;i<5;i++){
-                        for(int j=0;j<6;j++){
-                            if(now->child[i][j]==NULL) continue;
                             delete now->child[i][j];
                         }
                     }
+                    if(best==10000) best=now->grade;
+                    now->grade = best;
                     return best;
                 }
             }
@@ -180,7 +171,7 @@ struct direc{
                 this->x=tree.x;
                 this->y=tree.y;
                 delete tree.root;
-                //std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
+                std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
             }
             static void copy(struct node *to,int from[5][6],Color color[5][6],bool maxPlayer){
                 to->maxPlayer = maxPlayer;
