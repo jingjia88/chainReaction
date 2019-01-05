@@ -134,22 +134,17 @@ namespace playerOne
                 for(int i = 0;i<5;i++){
                     for(int j=0;j<6;j++){
                         if(color[i][j]==inputColor){
-                            myself+=Record[i][j];myself++;
-                        }else if(color[i][j]!=White && color[i][j]!=Black && color[i][j]!=inputColor){
-                            enmy+=Record[i][j];enmy++;
-                        }
-                    }
+                            myself++;
+                            if(i==0||i==4) myself++;
+                            if(j==0||j==5) myself++;
+                         }else if(color[i][j]!=White && color[i][j]!=Black && color[i][j]!=inputColor){
+                            enmy++;
+                            if(i==0||i==4) enmy++;
+                            if(j==0||j==5) enmy++;
+                         }
+                     }
                 }
                 return myself-enmy;
-            }
-            
-            static void printBoard(struct node* now){
-                for(int i = 0;i<5;i++){
-                    for(int j=0;j<6;j++){
-                        std::cout<<now->board[i][j]<<"-"<<now->color[i][j]<<" ";
-                    }   
-                    std::cout<<std::endl;
-                }
             }
             void copy(struct node *to,int from[5][6],Color color[5][6]){
                 for(int i =0;i<5;i++){
@@ -176,7 +171,14 @@ namespace playerOne
                 gameTree tree;
                 tree.root = new node(-1,-1);
                 this->copy(tree.root,Record,color,false);
-                int value=tree.minmax(4,4,tree.root,true,-1000,1000);
+                int value;
+                if(pace<9){
+                    pace++;
+                    value=tree.minmax(3,3,tree.root,true,-1000,1000);
+                }else{
+                    pace++;
+                    value=tree.minmax(4,4,tree.root,true,-1000,1000);
+                }
                 this->x=tree.x;
                 this->y=tree.y;//std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
                 delete tree.root;
@@ -203,10 +205,10 @@ namespace playerOne
             }
 
         private:
+            int pace=0;
             int x;
             int y;
     };
-
 };
 
 

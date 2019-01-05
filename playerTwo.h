@@ -126,10 +126,26 @@ namespace playerTwo
                 for(int i = 0;i<5;i++){
                     for(int j=0;j<6;j++){
                         if(color[i][j]==inputColor){
+                            for(int k = 0;k<4;k++){
+                                int corX=i+di[k].x;int corY=j+di[k].y;
+                                if(0<=corX && corX<5 && 0<=corY && corY<6){
+                                    if(color[i][j]!=White && color[i][j]!=Black && color[i][j]!=inputColor){
+                                    if((Max[corX][corY]-Record[corX][corY])<=(Max[i][j]-Record[i][j])) myself--;
+                                    if((Max[corX][corY]-Record[corX][corY])>(Max[i][j]-Record[i][j])) myself++;
+                                    }
+                                }
+                            }
                             myself++;
                             if(i==0||i==4) myself++;
                             if(j==0||j==5) myself++;
                          }else if(color[i][j]!=White && color[i][j]!=Black && color[i][j]!=inputColor){
+                             for(int k = 0;k<4;k++){
+                                int corX=i+di[k].x;int corY=j+di[k].y;
+                                if(0<=corX && corX<5 && 0<=corY && corY<6 &&color[corX][corY]==inputColor){
+                                    if((Max[corX][corY]-Record[corX][corY])<=(Max[i][j]-Record[i][j])) enmy--;
+                                    if((Max[corX][corY]-Record[corX][corY])>(Max[i][j]-Record[i][j])) enmy++;
+                                }
+                            }
                             enmy++;
                             if(i==0||i==4) enmy++;
                             if(j==0||j==5) enmy++;
