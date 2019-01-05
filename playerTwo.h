@@ -11,9 +11,14 @@ namespace playerTwo
         Color color[5][6];
         bool maxPlayer;
         int cor_x,cor_y,grade;
-        struct node* child[5][6];
-        node(){}
-        node(int x,int y):cor_x(x),cor_y(y){};
+        node* child[5][6];
+        node(int x,int y):cor_x(x),cor_y(y){
+            for(int i=0;i<5;i++){
+                for(int j=0;j<6;j++){
+                    child[i][j]=NULL;
+                }
+            }
+        };
         ~node() {}
     };
     int edge[5][6];
@@ -40,6 +45,7 @@ namespace playerTwo
                                     this->y=j;
                                 }
                             }
+                            delete now->child[i][j];
                             if (beta <= alpha){
                                 if(depth==limit){
                                     this->x=i;
@@ -47,7 +53,6 @@ namespace playerTwo
                                 }
                                 break;
                             }
-                            now->child[i][j]->~node();
                         }
                     }
                     if(alpha==-1000) alpha=now->grade;
@@ -60,8 +65,8 @@ namespace playerTwo
                             if(now->child[i][j]==NULL) continue;
                             int value = minmax(depth-1,limit,now->child[i][j],true,alpha,beta);
                             if(value<beta) beta=value;
+                            delete now->child[i][j];
                             if(beta<=alpha) break;
-                            now->child[i][j]->~node();
                         }
                     }
                     if(beta==1000) beta=now->grade;
@@ -73,15 +78,13 @@ namespace playerTwo
                 //建造孩子
                 for(int i =0;i<5;i++){
                     for(int j=0;j<6;j++){
-                        now->child[i][j]=NULL;
                         //如果這步可以走
                         if(now->color[i][j]==inputColor||now->color[i][j]==White){
-                            struct node* newNode=new node(i,j);
-                            this->copy(newNode,now->board,now->color);
-                            newNode->maxPlayer = !now->maxPlayer;
-                            game(i,j,newNode->board,newNode->color,inputColor);
-                            newNode->grade = score(newNode->board,edge,newNode->color,self);
-                            now->child[i][j]=newNode;
+                            now->child[i][j]=new node(i,j);
+                            this->copy(now->child[i][j],now->board,now->color);
+                            now->child[i][j]->maxPlayer = !now->maxPlayer;
+                            game(i,j,now->child[i][j]->board,now->child[i][j]->color,inputColor);
+                            now->child[i][j]->grade = score(now->child[i][j]->board,edge,now->child[i][j]->color,self);
                         }
                     }
                 }
@@ -123,22 +126,17 @@ namespace playerTwo
                 for(int i = 0;i<5;i++){
                     for(int j=0;j<6;j++){
                         if(color[i][j]==inputColor){
-                            myself+=Record[i][j];myself++;
-                        }else if(color[i][j]!=White && color[i][j]!=Black && color[i][j]!=inputColor){
-                            enmy+=Record[i][j];enmy++;
-                        }
-                    }
+                            myself++;
+                            if(i==0||i==4) myself++;
+                            if(j==0||j==5) myself++;
+                         }else if(color[i][j]!=White && color[i][j]!=Black && color[i][j]!=inputColor){
+                            enmy++;
+                            if(i==0||i==4) enmy++;
+                            if(j==0||j==5) enmy++;
+                         }
+                     }
                 }
                 return myself-enmy;
-            }
-            
-            static void printBoard(struct node* now){
-                for(int i = 0;i<5;i++){
-                    for(int j=0;j<6;j++){
-                        std::cout<<now->board[i][j]<<"-"<<now->color[i][j]<<" ";
-                    }   
-                    std::cout<<std::endl;
-                }
             }
             void copy(struct node *to,int from[5][6],Color color[5][6]){
                 for(int i =0;i<5;i++){
@@ -163,12 +161,19 @@ namespace playerTwo
                 }
                 self=inputColor;
                 gameTree tree;
-                tree.root = new node;
+                tree.root = new node(-1,-1);
                 this->copy(tree.root,Record,color,false);
-                int value=tree.minmax(5,5,tree.root,true,-1000,1000);
+                int value;
+                if(pace<9){
+                    pace++;
+                    value=tree.minmax(3,3,tree.root,true,-1000,1000);
+                }else{
+                    pace++;
+                    value=tree.minmax(4,4,tree.root,true,-1000,1000);
+                }
                 this->x=tree.x;
                 this->y=tree.y;std::cout<<tree.x<<tree.y<<" "<<value<<std::endl;
-                tree.root->~node();
+                delete tree.root;
                 
             }
             static void copy(struct node *to,int from[5][6],Color color[5][6],bool maxPlayer){
@@ -192,8 +197,10 @@ namespace playerTwo
             }
 
         private:
+            int pace=0;
             int x;
             int y;
     };
+
 
 };
